@@ -1,0 +1,18 @@
+name: InstaBox x86 Linux smoke
+on:
+  push:
+    paths: ['.github/workflows/instabox-smoke.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  smoke:
+    runs-on: instabox-medium
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - run: |
+          set -euo pipefail
+          test "$(uname -m)" = x86_64
+          node --version
+          npm --version
