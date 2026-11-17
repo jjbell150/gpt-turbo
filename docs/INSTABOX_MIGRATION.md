@@ -1,11 +1,12 @@
-# Staged free InstaBox runner migration
+# InstaBox Free CI rollout (17 November 2026)
 
-Three Linux workflows (`develop.yml`, `pull_request.yml`, `publish_docs.yml`) are changed to `runs-on: instabox-medium` in this **unmerged** branch. They require the GitHub App to be authorised for `jjbell150/gpt-turbo` before merging, or the GitHub jobs will queue indefinitely.
+All three Linux GitHub Actions workflows on the default `develop` branch now use **`instabox-medium`**:
+- `develop.yml`: `develop` branch package build/check.
+- `pull_request.yml`: PR package build/check.
+- `publish_docs.yml`: docs build and GitHub Pages deployment, retaining `pages:write` and OIDC `id-token:write`.
 
-`publish_docs.yml` also uses InstaBox. GitHub Pages `pages: write` and OIDC `id-token: write` remain enabled and require a successful real deployment before this specific flow can be considered verified.
+[PR #1](https://github.com/jjbell150/gpt-turbo/pull/1) was merged after the actual [InstaBox PR build 44031575445](https://github.com/jjbell150/gpt-turbo/actions/runs/44031575445) **passed**, using runner `instabox-gh-job-133864538476` in GitHub logs. GitHub App authorisation is therefore proven for this repository. The separate branch smoke test may have been queued, but the full PR build is stronger evidence.
 
-This is a public repository: don't use InstaBox snapshots (officially private-only), and assume fork PRs execute untrusted code on ephemeral third-party hosts. Install the App with repository-specific permissions and first test with a harmless workflow. The actual test outcomes are pending.
+**Not proven:** `publish_docs.yml` actually publishing to GitHub Pages. It only triggers when `master` changes, and the private/third-party execution trust boundary must be respected when granting Pages/OIDC tokens. This is a public repository: InstaBox CI snapshots are documented as private-repository only, and untrusted fork PRs must not receive elevated permissions.
 
-[Provider details and verified x86 test in the private Plymouth lab](https://github.com/jjbell150/plymouth-benchmarks/blob/main/docs/INSTABOX_RUNNERS.md).
-
-**GitHub App prerequisite:** The InstaBox App must be authorised for this public repository. A branch smoke run has been created to verify runner pickup. If it stays queued in GitHub, inspect the InstaBox CI dashboard refusal reason and grant repo access before merging. The deployment workflow only triggers when `master` changes, so its actual deployment still needs independent verification.
+One free InstaBox VM is shared across all linked repositories, so queue delays are normal. Official limits and setup: [verified InstaBox runbook](https://github.com/jjbell150/plymouth-benchmarks/blob/main/docs/INSTABOX_RUNNERS.md).
